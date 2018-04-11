@@ -1,0 +1,34 @@
+---
+title: "Top most liveable cities in the World"
+author: "Djamila Azib"
+date: "April 9, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here are the top 10 "most liveable" cities according to "The Global Liveability Report 2017
+```{r}
+library(maps)
+library(leaflet)
+cities<-c("Melbourne", "Vienna","Vancouver", "Toronto" ,"Calgary","Adelaide","Perth","Auckland",
+"Helsinki" ,"Hamburg")
+rank<-c(1:10)
+#create a data frame with two columns: cities and Rank
+df<-data.frame(cities,rank)
+#
+colnames(df)[1] <- "name"
+# get the coordinates of world cites
+WorldCities<-world.cities
+#select the 10 cities 
+topCities<-subset(WorldCities,WorldCities$name %in%cities)
+#drop the cities with same name in other countries
+topCities<-topCities[-c(2,8,10,11,14),]
+#merge topcities with df
+topCities<- merge(topCities,df)
+
+m<-leaflet()%>%addTiles()%>%addMarkers(data=topCities,lng=~long,lat=~lat,popup= paste("N°",topCities$rank ,"is ",topCities$name,"in ",topCities$country.etc))
+m
+```
